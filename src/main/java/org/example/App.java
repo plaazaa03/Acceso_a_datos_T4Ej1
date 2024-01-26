@@ -177,10 +177,15 @@ public class App
     }
 
     private static void eliminarLibro() {
-
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Introduzca el ISBN del libro que quiere borrar: ");
+    String isbnDel = scanner.nextLine();
     }
 
     private static void eliminarSocio() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Introduzca el DNI del socio que quiere borrar: ");
+        String dniDel = scanner.nextLine();
 
     }
 }
