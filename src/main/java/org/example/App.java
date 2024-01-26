@@ -1,6 +1,7 @@
 package org.example;
 
 
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,7 +17,6 @@ import java.util.Scanner;
  */
 public class App 
 {
-    //hago estatico el session por que no me lo pilla
     private static Session session;
     public static void main( String[] args )
     {
@@ -114,21 +114,73 @@ public class App
     }
 
     private static void realizarInsercionLibro() {
+        Transaction transaction = session.beginTransaction();
+        LibroClass nuevoLibro = new LibroClass();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Introduzca el ISBN: ");
+        String isbnInput = scanner.nextLine();
+
+        System.out.println("Introduzca el titulo: ");
+        String tituloInput = scanner.nextLine();
+
+        System.out.println("Introduzca el Autor: ");
+        String autorInput = scanner.nextLine();
+
+        System.out.println("Introduza la editorial: ");
+        String editorialInput = scanner.nextLine();
+
+        nuevoLibro.setIsbn(isbnInput);
+        nuevoLibro.setAutor(autorInput);
+        nuevoLibro.setTitulo(tituloInput);
+        nuevoLibro.setEditorial(editorialInput);
+
+        session.save(nuevoLibro);
+        transaction.commit();
         
     }
 
     private static void realizarInsercionSocio() {
+        Transaction transaction = session.beginTransaction();
+        SocioClass socioClass = new SocioClass();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Introduzca el DNI: ");
+        String dniInput = scanner.nextLine();
+
+        System.out.println("Introduzca el nombre: ");
+        String nombreInput = scanner.nextLine();
+
+        System.out.println("Introduzca el autor: ");
+        String telefonoInput = scanner.nextLine();
+
+        socioClass.setDni(dniInput);
+        socioClass.setNombre(nombreInput);
+        socioClass.setTfno(telefonoInput);
+
+
+        session.save(socioClass);
+        transaction.commit();
     }
 
     private static void realizarModificacionLibro() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Indroduzca el ISBN del libro que quiere modificar: ");
+        String isbnMod = scanner.nextLine();
+
+
     }
 
     private static void realizarModificacionSocio() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Introduzca el dni del socio que quiere modificar: ");
+        String dniMod = scanner.nextLine();
     }
 
     private static void eliminarLibro() {
+
     }
 
     private static void eliminarSocio() {
+
     }
 }
