@@ -1,6 +1,7 @@
 package org.example;
 
 
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
@@ -11,15 +12,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     private static Session session;
     public static void main( String[] args )
     {
+        //Iniciar Hibernate
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         session = sessionFactory.openSession();
         if (session != null){
@@ -35,11 +33,13 @@ public class App
                 System.out.println("2. Listar todos los socios");
                 System.out.println("3. Realizar una inserción en la tabla libro");
                 System.out.println("4. Realizar una insercion en la tabla socio");
-                System.out.println("5. Realizar una modificacion de un libro.");
+                System.out.println("5. Realizar una modificacion de un libro");
                 System.out.println("6. Realizar una modificacion de un socio");
                 System.out.println("7. Realizar la eliminación de un libro");
                 System.out.println("8. Realizar la eliminacion de un socio");
+                System.out.println("9. Salir del programa");
 
+                System.out.println("Opcion: ");
                 opcion = scanner.nextInt();
 
                 switch (opcion){
@@ -80,6 +80,7 @@ public class App
         }
     }
 
+    //Metodo de listar libros
     private static void listarLibros() {
         LibroClass libroClass = new LibroClass();
         Query q = session.createQuery("from LibroClass");
@@ -97,6 +98,7 @@ public class App
         }
     }
 
+    //Metodo listar socios
     private static void listarSocios() {
         SocioClass socioClass = new SocioClass();
         Query q = session.createQuery("from SocioClass ");
@@ -113,6 +115,7 @@ public class App
         }
     }
 
+    //Metodo para meter mas libeos
     private static void realizarInsercionLibro() {
         Transaction transaction = session.beginTransaction();
         LibroClass nuevoLibro = new LibroClass();
@@ -136,9 +139,10 @@ public class App
 
         session.save(nuevoLibro);
         transaction.commit();
-        
+
     }
 
+    //Metodo para meter mas socios
     private static void realizarInsercionSocio() {
         Transaction transaction = session.beginTransaction();
         SocioClass socioClass = new SocioClass();
@@ -162,30 +166,78 @@ public class App
         transaction.commit();
     }
 
+    //metodo para modificar algun libro (debe de pedir el isbn del libro que queremos modificar)
     private static void realizarModificacionLibro() {
+        Transaction transaction = session.beginTransaction();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Indroduzca el ISBN del libro que quiere modificar: ");
         String isbnMod = scanner.nextLine();
 
+        LibroClass libroClass = session.get(LibroClass.class,isbnMod);
+        System.out.println("Introduzca el nuevo titulo: ");
+        String tituloMod = scanner.nextLine();
+        libroClass.setTitulo(tituloMod);
+
+        System.out.println("Introduzca el nuevo autor: ");
+        String autorMod = scanner.nextLine();
+        libroClass.setAutor(autorMod);
+
+        session.save(libroClass);
+        transaction.commit();
+
+
 
     }
 
+    //metodo para modificar un socio (debemos de indicar el dni del socio que queremos modificar)
     private static void realizarModificacionSocio() {
+        Transaction transaction = session.beginTransaction();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Introduzca el dni del socio que quiere modificar: ");
         String dniMod = scanner.nextLine();
+
+        SocioClass socioClass = session.get(SocioClass.class, dniMod);
+        System.out.println("Introduzca el nuevo nombre: ");
+        String nombreMod = scanner.nextLine();
+        socioClass.setNombre(nombreMod);
+
+        System.out.println("Introduzca el nuevo telefono: ");
+        String telefonoMod = scanner.nextLine();
+        socioClass.setTfno(telefonoMod);
+
+        session.save(socioClass);
+        transaction.commit();
+
+
     }
 
+    //Eliminar un libo de la base de datos (Nos pedira que incertemos el isbn del libro que queremos borrar)
     private static void eliminarLibro() {
-    Scanner scanner = new Scanner(System.in);
-    System.out.println("Introduzca el ISBN del libro que quiere borrar: ");
-    String isbnDel = scanner.nextLine();
+        Transaction transaction = session.beginTransaction();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Introduzca el ISBN del libro que quiere borrar: ");
+        String isbnDel = scanner.nextLine();
+
+        LibroClass libroClass = session.get(LibroClass.class, isbnDel);
+        libroClass.setIsbn(isbnDel);
+
+        session.delete(libroClass);
+        transaction.commit();
+
     }
 
+    //Eliminar un socio de la base de datos (Nos pedira que insertemos el dni del socio que queremos borrar)
     private static void eliminarSocio() {
+        Transaction transaction = session.beginTransaction();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Introduzca el DNI del socio que quiere borrar: ");
         String dniDel = scanner.nextLine();
+
+        SocioClass socioClass = session.get(SocioClass.class, dniDel);
+        socioClass.setDni(dniDel);
+
+        session.delete(socioClass);
+        transaction.commit();
 
     }
 }
